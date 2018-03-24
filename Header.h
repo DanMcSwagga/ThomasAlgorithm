@@ -6,6 +6,7 @@
 #include <cmath>
 #include <iomanip>
 
-void Output();
-void ReadFromFile(double**, int, std::string);
 void Thomas(int, double*, double*, double*, double*, double*);
+void readFromFile(int, double**, std::string);
+void outputSingle(int, double*, std::string, char);
+void outputErrors(int, double*, double*);
