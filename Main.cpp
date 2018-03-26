@@ -5,8 +5,7 @@
 
 #include "Header.h"
 
-// starts at 1
-#define CURR_MOD 3
+#define CURR_MOD 0
 #define MOD_AMOUNT 3
 using namespace std;
 
@@ -45,90 +44,38 @@ int main()
 	// Fill LHS diagonals a[], b[], c[] and RHS d[]
 	for (int i = 0; i < N - 1; i++)
 	{
-		a[i] = lhs[i][0]; // under diagonal
-		b[i] = lhs[i][1] * modif[CURR_MOD - 1]; // main diagonal
-		c[i] = lhs[i][2]; // over diagonal
-		d[i] = rhs[i][CURR_MOD - 1]; // rhs
+		a[i] = lhs[i + 1][0]; // under diagonal -- first element is missing: [1; N-1]
+		b[i] = lhs[i][1] * modif[CURR_MOD]; // main diagonal: [0; N-1]
+		c[i] = lhs[i][2]; // over diagonal: [0; N-2]
+		d[i] = rhs[i][CURR_MOD]; // rhs: [0; N-1]
 	}
 	b[N - 1] = lhs[N - 1][1]; // main diagonal
-	d[N - 1] = rhs[N - 1][CURR_MOD - 1]; // rhs
+	d[N - 1] = rhs[N - 1][CURR_MOD]; // rhs
 
 
 
-	// Output lhs, rhs from file [temporary]
-	cout << "Overall view [read from files] -- LHS | RHS:" << endl << endl;
-	for (int i = 0; i < N; i++)
-	{
-		for (int j = 0; j < 3; j++)
-		{
-			cout << setw(10) << lhs[i][j] << " ";
-		}
-		cout << " | ";
-		for (int j = 0; j < 3; j++)
-		{
-			cout << setw(10) << rhs[i][j] << " ";
-		}
-		cout << endl;
-	}
-	cout << endl << endl << endl;
-	// Output diagonal arrays [temporary]
-	cout << "    a[]  ,     b[]  ,     c[]  ,     d[]" << endl << endl;
-	for (int i = 0; i < N; i++)
-	{
-		if (i != N - 1)
-		{
-			cout << setw(7) << a[i] << "  | ";
-			cout << setw(7) << b[i] << "  | ";
-			cout << setw(7) << c[i] << "  | ";
-			cout << setw(7) << d[i] << " ";
-			cout << endl;
-
-		}
-		else
-		{
-			cout << setw(7) << " - " << "  | ";
-			cout << setw(7) << b[i] << "  | ";
-			cout << setw(7) << " - " << "  | ";
-			cout << setw(7) << d[i] << " ";
-			cout << endl << endl << endl;
-
-		}
-	}
-
-
-	// Main calculating method
 	Thomas(N, a, b, c, d, res);
+	outputAll(N, res, cor, modif[CURR_MOD]);
 
-
-	// Output diagonal arrays [temporary]
-	cout << "    a[]  ,     b[]  ,     c[]  ,     d[]" << endl << endl;
-	for (int i = 0; i < N; i++)
+	// refill arrays
+	for (int i = 0; i < N; i++) // refill arrays to start over with different mod
 	{
-		if (i != N - 1)
-		{
-			cout << setw(7) << a[i] << "  | ";
-			cout << setw(7) << b[i] << "  | ";
-			cout << setw(7) << c[i] << "  | ";
-			cout << setw(7) << d[i] << " ";
-			cout << endl;
-
-		}
-		else
-		{
-			cout << setw(7) << " - " << "  | ";
-			cout << setw(7) << b[i] << "  | ";
-			cout << setw(7) << " - " << "  | ";
-			cout << setw(7) << d[i] << " ";
-			cout << endl << endl << endl;
-
-		}
+		b[i] = lhs[i][1] * modif[CURR_MOD + 1]; // main diagonal: [0; N-1]
+		d[i] = rhs[i][CURR_MOD + 1]; // rhs: [0; N-1]
 	}
 
+	Thomas(N, a, b, c, d, res);
+	outputAll(N, res, cor, modif[CURR_MOD + 1]);
 
-	// Output
-	outputSingle(N, res, "Result:", 'X');
-	outputSingle(N, cor, "Correct:", 'X');
-	outputErrors(N, res, cor);
+	// refill arrays
+	for (int i = 0; i < N; i++)
+	{
+		b[i] = lhs[i][1] * modif[CURR_MOD + 2]; // main diagonal: [0; N-1]
+		d[i] = rhs[i][CURR_MOD + 2]; // rhs: [0; N-1]
+	}
+
+	Thomas(N, a, b, c, d, res);
+	outputAll(N, res, cor, modif[CURR_MOD + 2]);
 
 
 	cin.get();
@@ -152,36 +99,6 @@ void readFromFile(int N, double** matrix, string path)
 	in.close();
 }
 
-void outputSingle(int N, double* array, string intro, char symbol)
-{
-	cout << intro << endl << endl;
-	for (int i = 0; i < N; i++)
-	{
-		cout << symbol << i + 1 << " = " << setw(10) << array[i] << " , ";
-		if (i == 4) cout << endl;
-	}
-	cout << endl << endl << endl;
-}
-
-void outputErrors(int N, double* cor, double* res)
-{
-	cout << endl << "Absolute error:" << endl << endl;
-	for (int i = 0; i < N; i++)
-	{
-		cout << "A" << i + 1 << " = " << setw(10) << abs(cor[i] - res[i]) << " , ";
-		if (i == 4) cout << endl;
-	}
-	cout << endl << endl << endl;
-
-	cout << "Relative error (%):" << endl << endl;
-	for (int i = 0; i < N; i++)
-	{
-		cout << "E" << i + 1 << " = " << setw(10) << abs((cor[i] - res[i]) * 100 / res[i]) << "\%, ";
-		if (i == 4) cout << endl;
-	}
-	cout << endl << endl << endl;
-}
-
 
 
 /*// Manual fill of values of LHS
@@ -192,3 +109,46 @@ for (int i = 0; i < N - 1; i++)
 	c[i] = i * 0.2 + 0.5;
 }
 b[N - 1] = -6.4;*/
+
+
+/*// Output diagonal arrays [temporary]
+cout << "       a[]        b[]        c[]  |        d[]" << endl << endl;
+for (int i = 0; i < N; i++)
+{
+	if (i != N - 1)
+	{
+		cout << setw(10) << a[i] << " ";
+		cout << setw(10) << b[i] << " ";
+		cout << setw(10) << c[i] << "  | ";
+		cout << setw(10) << d[i] << " ";
+		cout << endl;
+
+	}
+	else
+	{
+		cout << setw(10) << " - " << " ";
+		cout << setw(10) << b[i] << " ";
+		cout << setw(10) << " - " << "  | ";
+		cout << setw(10) << d[i] << " ";
+		cout << endl << endl << endl;
+
+	}
+}*/
+
+
+/*// Output lhs, rhs from file [temporary]
+cout << "Overall view [read from files] -- LHS | RHS:" << endl << endl;
+for (int i = 0; i < N; i++)
+{
+for (int j = 0; j < 3; j++)
+{
+cout << setw(10) << lhs[i][j] << " ";
+}
+cout << " | ";
+for (int j = 0; j < 3; j++)
+{
+cout << setw(10) << rhs[i][j] << " ";
+}
+cout << endl;
+}
+cout << endl << endl << endl;*/
