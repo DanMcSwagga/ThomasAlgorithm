@@ -25,8 +25,9 @@ int main()
 
 	// array of different modifiers variants
 	double modif[MOD_AMOUNT];
-	for (int i = 0; i < MOD_AMOUNT; i++)
-		modif[i] = 1.0 * pow(10, -i);
+	modif[0] = 1.0;
+	modif[1] = 0.1;
+	modif[2] = 0.001;
 
 	// 2d array of lhs of the system
 	double** lhs = new double*[N];
