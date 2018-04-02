@@ -12,6 +12,7 @@ using namespace std;
 int main()
 {
 	constexpr int N = 10;
+	int curr_modif = 0;
 	double a[N - 1];
 	double b[N];
 	double c[N - 1];
@@ -46,37 +47,37 @@ int main()
 	for (int i = 0; i < N - 1; i++)
 	{
 		a[i] = lhs[i + 1][0]; // under diagonal -- first element is missing: [1; N-1]
-		b[i] = lhs[i][1] * modif[CURR_MOD]; // main diagonal: [0; N-1]
+		b[i] = lhs[i][1] * modif[curr_modif]; // main diagonal: [0; N-1]
 		c[i] = lhs[i][2]; // over diagonal: [0; N-2]
-		d[i] = rhs[i][CURR_MOD]; // rhs: [0; N-1]
+		d[i] = rhs[i][curr_modif]; // rhs: [0; N-1]
 	}
 	b[N - 1] = lhs[N - 1][1]; // main diagonal
-	d[N - 1] = rhs[N - 1][CURR_MOD]; // rhs
+	d[N - 1] = rhs[N - 1][curr_modif]; // rhs
 
 
 
 	Thomas(N, a, b, c, d, res);
-	outputAll(N, res, cor, modif[CURR_MOD]);
+	outputAll(N, res, cor, modif[curr_modif++]);
 
 	// refill arrays
 	for (int i = 0; i < N; i++) // refill arrays to start over with different mod
 	{
-		b[i] = lhs[i][1] * modif[CURR_MOD + 1]; // main diagonal: [0; N-1]
-		d[i] = rhs[i][CURR_MOD + 1]; // rhs: [0; N-1]
+		b[i] = lhs[i][1] * modif[curr_modif]; // main diagonal: [0; N-1]
+		d[i] = rhs[i][curr_modif]; // rhs: [0; N-1]
 	}
 
 	Thomas(N, a, b, c, d, res);
-	outputAll(N, res, cor, modif[CURR_MOD + 1]);
+	outputAll(N, res, cor, modif[curr_modif++]);
 
 	// refill arrays
 	for (int i = 0; i < N; i++)
 	{
-		b[i] = lhs[i][1] * modif[CURR_MOD + 2]; // main diagonal: [0; N-1]
-		d[i] = rhs[i][CURR_MOD + 2]; // rhs: [0; N-1]
+		b[i] = lhs[i][1] * modif[curr_modif]; // main diagonal: [0; N-1]
+		d[i] = rhs[i][curr_modif]; // rhs: [0; N-1]
 	}
 
 	Thomas(N, a, b, c, d, res);
-	outputAll(N, res, cor, modif[CURR_MOD + 2]);
+	outputAll(N, res, cor, modif[curr_modif++]);
 
 
 	cin.get();
